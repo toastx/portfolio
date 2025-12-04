@@ -5,18 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>toastx – Solana Developer & Founding Engineer</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
     <header>
         <div class="header-content">
-            <a href="#home" class="logo">toastx</a>
             <nav id="nav">
-                <a href="#home" class="nav-link">Home</a>
-                <a href="#about" class="nav-link">About</a>
-                <a href="#projects" class="nav-link">Projects</a>
-                <a href="#skills" class="nav-link">Skills</a>
-                <a href="#socials" class="nav-link">Socials</a>
+                <a href="#home" class="nav-link active">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
+                    <span>Home</span>
+                </a>
+                <a href="#about" class="nav-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span>About</span>
+                </a>
+                <a href="#projects" class="nav-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span>Projects</span>
+                </a>
+                <a href="#skills" class="nav-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    <span>Skills</span>
+                </a>
+                <a href="#socials" class="nav-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                    <span>Socials</span>
+                </a>
             </nav>
             <button class="hamburger" id="hamburger">
                 <span></span>
@@ -24,7 +56,6 @@
                 <span></span>
             </button>
         </div>
-        <div class="shine-line"></div>
     </header>
 
     <!-- Hero -->
@@ -79,19 +110,26 @@
                         <div class="profile-image-glow"></div>
                     </div>
                     <h3 class="profile-name">Toastx</h3>
-                    <div class="profile-location">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                            <circle cx="12" cy="10" r="3" />
-                        </svg>
-                        <span>India</span>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <span class="stat-number">2+</span>
+                            <span class="stat-label">Years Exp</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-number">5+</span>
+                            <span class="stat-label">Projects</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-number">600+</span>
+                            <span class="stat-label">Commits</span>
+                        </div>
                     </div>
                 </div>
-            
+
                 <!-- About Content -->
                 <div class="about-content">
                     <div class="about-text">
-                        <p>Hey! I'm Toastx,a blockchain developer from India who's been deep in the Solana ecosystem for over 2 years. I built
+                        <p>Hey! I'm Toastx, a blockchain developer from India who's been deep in the Solana ecosystem for over 2 years. I built
                             Sola AI and love crafting smart contracts and dApps that actually work.</p>
                         <p>When I'm not pushing code, you'll probably find me trading, grinding through math problems, or getting lost in video
                             games.</p>
@@ -101,8 +139,6 @@
                         <div class="highlights">
                         <span class="highlight-tag">⚡ Solana Programs</span>
                         <span class="highlight-tag">🔗 Smart Contracts</span>
-                        <span class="highlight-tag">📊 DeFi</span>
-                        <span class="highlight-tag">🏗️ Infrastructure</span>
                         <span class="highlight-tag">🎯 Full Stack</span>
                         </div>
                 </div>
