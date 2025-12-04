@@ -180,16 +180,17 @@ nav:hover .nav-link span {
 nav:hover .nav-link {
     padding: 0.6rem 1rem;
 }
+
 .nav-link:hover {
     color: var(--primary);
-    background: rgba(230, 57, 70, 0.1);
+    background: rgba(230, 57, 70, 0.15);
 }
 
 .nav-link:hover svg {
-    filter: drop-shadow(0 0 5px rgba(230, 57, 70, 0.5));
+    filter: drop-shadow(0 0 8px rgba(230, 57, 70, 0.6));
 }
 
-/* Active link indicator */
+/* Active link indicator - only show when nav is not hovered */
 .nav-link.active {
     color: var(--primary);
     background: rgba(230, 57, 70, 0.15);
@@ -199,6 +200,25 @@ nav:hover .nav-link {
     filter: drop-shadow(0 0 8px rgba(230, 57, 70, 0.6));
 }
 
+/* When hovering nav, remove active styling from non-hovered links */
+nav:hover .nav-link.active {
+    color: var(--text);
+    background: transparent;
+}
+
+nav:hover .nav-link.active svg {
+    filter: none;
+}
+
+/* Re-apply active styling when hovering the active link itself */
+nav:hover .nav-link.active:hover {
+    color: var(--primary);
+    background: rgba(230, 57, 70, 0.15);
+}
+
+nav:hover .nav-link.active:hover svg {
+    filter: drop-shadow(0 0 8px rgba(230, 57, 70, 0.6));
+}
 .hamburger {
     display: none;
     flex-direction: column;

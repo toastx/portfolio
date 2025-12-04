@@ -166,6 +166,41 @@ document.querySelectorAll(".nav-link").forEach((link) => {
   });
 });
 
+// Scroll Spy - Update active nav link based on scroll position
+const sections = document.querySelectorAll("section[id], .hero");
+const navLinks = document.querySelectorAll(".nav-link");
+
+function updateActiveNav() {
+  let current = "";
+  const scrollPosition = window.scrollY + 150;
+  
+  sections.forEach((section) => {
+    const sectionTop = section.offsetTop;
+    const sectionHeight = section.offsetHeight;
+    
+    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+      current = section.getAttribute("id") || "home";
+    }
+  });
+  
+  // If at the very top, set home as active
+  if (window.scrollY < 100) {
+    current = "home";
+  }
+  
+  navLinks.forEach((link) => {
+    link.classList.remove("active");
+    const href = link.getAttribute("href").substring(1);
+    if (href === current) {
+      link.classList.add("active");
+    }
+  });
+}
+
+// Listen to scroll events
+window.addEventListener("scroll", updateActiveNav);
+updateActiveNav(); // Run on load
+
 // Initialize
 populateProjects();
 populateSkills();
