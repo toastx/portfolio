@@ -24,22 +24,6 @@ const projects = [
     liveUrl: "https://crates.io/crates/starkdev",
     sourceUrl: "https://github.com/toastx/starknet-dev-setup",
   },
-  {
-    name: "LinkPay",
-    description:
-      "Simplified blockchain payments through shareable links. One click to send or receive — no complex interfaces or key management needed.",
-    stack: ["Next.js", "Python", "Stellar XLM"],
-    liveUrl: null,
-    sourceUrl: "https://github.com/toastx/LinkPay",
-  },
-  {
-    name: "AptNinja",
-    description:
-      "Token-driven game on Aptos inspired by Fruit Ninja. Features gasless transactions and hit-based onchain event triggers.",
-    stack: ["Move", "JavaScript", "Aptos"],
-    liveUrl: "https://www.aptosninja.fun",
-    sourceUrl: "https://github.com/jaibhedia/apt-ninja1",
-  },
 ];
 
 // Skills Data with SVG Icons
@@ -145,12 +129,12 @@ function populateSkills() {
 
 // Initialize Lenis Smooth Scroll
 const lenis = new Lenis({
-  duration: 1.2,
+  duration: 1.5,
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   direction: "vertical",
   gestureDirection: "vertical",
   smooth: true,
-  mouseMultiplier: 1,
+  mouseMultiplier: 0.8,
   smoothTouch: false,
   touchMultiplier: 2,
 });

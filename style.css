@@ -150,7 +150,7 @@ nav {
     position: relative;
     display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0;
         padding: 0.6rem;
         border-radius: 50px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -179,6 +179,7 @@ nav:hover .nav-link span {
 
 nav:hover .nav-link {
     padding: 0.6rem 1rem;
+    gap: 0.5rem;
 }
 
 .nav-link:hover {
@@ -1013,43 +1014,101 @@ nav:hover .nav-link.active:hover svg {
     z-index: 5;
 }
 .project-card:hover {
-    border-color: rgba(230, 57, 70, 0.5);
+    border-color: rgba(54, 2, 5, 0.133);
+        transform: scale(1.02);
         box-shadow:
             0 -10px 60px rgba(0, 0, 0, 0.6),
-            0 0 40px rgba(230, 57, 70, 0.15);
-    }
-    
-    .project-card:hover::before {
-        opacity: 1;
+        0 0 60px rgba(100, 7, 15, 0.2),
+            inset 0 0 30px rgba(230, 57, 70, 0.05);
+        }
+        
+        .project-card:hover::before {
+            opacity: 1;
 }
 
+/* Animated border glow on hover */
+.project-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg,
+            transparent 0%,
+            rgba(46, 2, 6, 0.217) 25%,
+            rgba(79, 3, 8, 0.661) 50%,
+            rgba(53, 13, 17, 0.3) 75%,
+            transparent 100%);
+    background-size: 400% 400%;
+    border-radius: 22px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.project-card:hover::after {
+    opacity: 1;
+    animation: borderGlow 3s ease infinite;
+}
+
+@keyframes borderGlow {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
 .project-name {
     font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.75rem;
+    font-size: 1.75rem;
         margin-bottom: 1.25rem;
         color: #fff;
     font-weight: 700;
-        display: flex;
+    display: flex;
         align-items: center;
     gap: 1rem;
-        text-transform: uppercase;
+    text-transform: uppercase;
         letter-spacing: 0.02em;
-    }
-    
-    .project-name::before {
-        content: '';
+    transition: text-shadow 0.3s ease;
+}
+
+.project-name::before {
+    content: '';
     width: 14px;
-        height: 14px;
+    height: 14px;
         background: var(--primary);
         border-radius: 50%;
         flex-shrink: 0;
     box-shadow: 0 0 16px rgba(230, 57, 70, 0.7);
-        transition: all 0.3s ease;
+    transition: all 0.3s ease;
     }
+.project-card:hover .project-name {
+    text-shadow: 0 0 20px rgba(230, 57, 70, 0.4);
+}
+
+.project-card:hover .project-name::before {
+    box-shadow: 0 0 30px rgba(230, 57, 70, 1);
+    transform: scale(1.3);
+    animation: pulse 1.5s ease-in-out infinite;
+}
     
-    .project-card:hover .project-name::before {
-        box-shadow: 0 0 24px rgba(230, 57, 70, 0.9);
-        transform: scale(1.2);
+        @keyframes pulse {
+    
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(230, 57, 70, 1);
+                transform: scale(1.3);
+            }
+    
+            50% {
+                box-shadow: 0 0 40px rgba(230, 57, 70, 0.6);
+                transform: scale(1.1);
+            }
 }
 
 .project-desc {
