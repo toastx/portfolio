@@ -1,0 +1,9 @@
+{
+  "name": "portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "npx -y serve public",
+    "build": "echo \"static site - deploy the public/ folder as-is\""
+  }
+}

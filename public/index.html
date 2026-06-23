@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>toastx</title>
+  <link rel="icon" type="image/jpeg" href="85751209.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{background:#EFF1F5}
+    ::selection{background:#DCD0F7;color:#4C4F69}
+    @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.7);opacity:.3}}
+    @keyframes catbob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-3px) rotate(3deg)}}
+    @keyframes drawline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    @keyframes bouncedown{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+    #wctrl .g{opacity:0;font-size:9px;line-height:1;color:rgba(60,20,20,.55);font-family:'IBM Plex Mono',monospace;font-weight:700;transition:opacity .15s ease}
+    #wctrl:hover .g{opacity:1}
+    html.lenis,html.lenis body{height:auto}
+    .lenis.lenis-smooth{scroll-behavior:auto!important}
+    .lenis.lenis-stopped{overflow:hidden}
+    [data-pcard]:hover,[data-pcard]:focus-within{transform:translateY(-4px);box-shadow:0 18px 40px rgba(73,77,100,.16);border-color:#CBB8F2;z-index:2;outline:none}
+    [data-pdetail]{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .46s cubic-bezier(.22,1,.36,1),opacity .4s ease}
+    [data-pcard]:hover [data-pdetail],[data-pcard]:focus-within [data-pdetail]{grid-template-rows:1fr;opacity:1}
+    [data-pdetail]>div{overflow:hidden;min-height:0}
+    [data-pcard] [data-phint]{opacity:.7;transition:opacity .3s ease}
+    [data-pcard]:hover [data-phint],[data-pcard]:focus-within [data-phint]{opacity:0}
+    @media (hover:none){[data-pdetail]{grid-template-rows:1fr;opacity:1}[data-phint]{display:none}}
+    @media (prefers-reduced-motion:reduce){[data-pcard],[data-pdetail],[data-phint]{transition:none}}
+  </style>
+  <script src="image-slot.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+</helmet>
+<div id="ide" style="font-family:'IBM Plex Sans',system-ui,sans-serif;color:#5C5F77;background:#EFF1F5;min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility">
+
+  <div id="titlebar" style="position:fixed;top:0;left:0;right:0;height:46px;z-index:60;background:rgba(230,233,239,.82);backdrop-filter:saturate(140%) blur(12px);-webkit-backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid #DCE0E8;display:flex;align-items:center;gap:14px;padding:0 14px 0 16px">
+    <button id="menuBtn" aria-label="Toggle navigation" style="display:none;align-items:center;justify-content:center;width:30px;height:30px;border:none;background:transparent;cursor:pointer;border-radius:8px;flex:0 0 auto">
+      <span style="display:flex;flex-direction:column;gap:4px"><span style="width:16px;height:1.6px;background:#6C6F85;border-radius:2px;display:block"></span><span style="width:16px;height:1.6px;background:#6C6F85;border-radius:2px;display:block"></span><span style="width:16px;height:1.6px;background:#6C6F85;border-radius:2px;display:block"></span></span>
+    </button>
+    <div id="wctrl" style="display:flex;align-items:center;gap:8px;flex:0 0 auto">
+      <button data-win="close" aria-label="Close" style="width:11px;height:11px;border:none;padding:0;border-radius:50%;background:#D20F39;cursor:pointer;display:flex;align-items:center;justify-content:center"><span class="g">&#215;</span></button>
+      <button data-win="min" aria-label="Minimize" style="width:11px;height:11px;border:none;padding:0;border-radius:50%;background:#DF8E1D;cursor:pointer;display:flex;align-items:center;justify-content:center"><span class="g">&#8211;</span></button>
+      <button data-win="max" aria-label="Maximize" style="width:11px;height:11px;border:none;padding:0;border-radius:50%;background:#40A02B;cursor:pointer;display:flex;align-items:center;justify-content:center"><span class="g">+</span></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;min-width:0">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#5C5F77;font-weight:500;white-space:nowrap">portfolio</span>
+      <span style="color:#ACB0BE;font-size:12px">/</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#9CA0B0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">toastx</span>
+    </div>
+    <div style="flex:1 1 auto"></div>
+    <div id="statusLn" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#9CA0B0;white-space:nowrap">Ln 1  ·  0%</div>
+    <div id="progress" style="position:absolute;left:0;bottom:-1px;height:2px;width:100%;transform:scaleX(0);transform-origin:left center;background:linear-gradient(90deg,#7287FD,#8839EF);transition:transform .15s ease-out"></div>
+  </div>
+
+  <div id="backdrop" style="position:fixed;inset:46px 0 0 0;z-index:38;background:rgba(76,79,105,.32);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .35s ease"></div>
+
+  <aside id="sidebar" style="position:fixed;top:46px;left:0;bottom:0;width:264px;z-index:42;background:#E6E9EF;border-right:1px solid #DCE0E8;overflow:hidden;display:flex;flex-direction:column;transition:width .42s cubic-bezier(.22,1,.36,1),transform .42s cubic-bezier(.22,1,.36,1),box-shadow .42s ease">
+    <div style="display:flex;align-items:center;height:48px;padding:0 12px 0 16px;flex:0 0 auto">
+      <span data-role="label" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:#9CA0B0;text-transform:uppercase;font-weight:500;transition:opacity .25s ease;white-space:nowrap">Contents</span>
+      <div style="flex:1"></div>
+      <button id="collapseBtn" aria-label="Collapse sidebar" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border:none;background:transparent;cursor:pointer;border-radius:8px;flex:0 0 auto" style-hover="background:#EBE0FB">
+        <span id="chev" style="display:block;width:8px;height:8px;border-left:1.8px solid #8C8FA1;border-bottom:1.8px solid #8C8FA1;transform:rotate(45deg);margin-left:3px;transition:transform .42s cubic-bezier(.22,1,.36,1)"></span>
+      </button>
+    </div>
+
+    <nav id="navlist" style="position:relative;padding:6px 8px;flex:1 1 auto">
+      <div id="navpill" style="position:absolute;left:8px;right:8px;top:6px;height:48px;border-radius:13px;background:#EBE0FB;opacity:0;transform:translateY(0);transition:transform .46s cubic-bezier(.22,1,.36,1),height .3s ease,opacity .3s ease;z-index:1"></div>
+      <div id="navbar" style="position:absolute;left:0;top:6px;width:3px;height:22px;border-radius:0 3px 3px 0;background:#8839EF;opacity:0;transform:translateY(13px);transition:transform .46s cubic-bezier(.22,1,.36,1),opacity .3s ease;z-index:3"></div>
+
+      <a href="#about" data-target="about" style="position:relative;z-index:2;display:flex;align-items:center;gap:13px;height:48px;padding:0 12px;border-radius:13px;text-decoration:none;color:#6C6F85;font-size:14.5px;font-weight:500" style-hover="color:#4C4F69">
+        <span style="flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#EBE0FB;color:#8839EF;display:flex;align-items:center;justify-content:center"><i data-lucide="user" style="width:17px;height:17px"></i></span>
+        <span data-role="label" style="transition:opacity .25s ease;white-space:nowrap">About</span>
+      </a>
+      <a href="#experience" data-target="experience" style="position:relative;z-index:2;display:flex;align-items:center;gap:13px;height:48px;padding:0 12px;border-radius:13px;text-decoration:none;color:#6C6F85;font-size:14.5px;font-weight:500" style-hover="color:#4C4F69">
+        <span style="flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#E2EFDD;color:#40A02B;display:flex;align-items:center;justify-content:center"><i data-lucide="briefcase" style="width:17px;height:17px"></i></span>
+        <span data-role="label" style="transition:opacity .25s ease;white-space:nowrap">Experience</span>
+      </a>
+      <a href="#projects" data-target="projects" style="position:relative;z-index:2;display:flex;align-items:center;gap:13px;height:48px;padding:0 12px;border-radius:13px;text-decoration:none;color:#6C6F85;font-size:14.5px;font-weight:500" style-hover="color:#4C4F69">
+        <span style="flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#FDE7D5;color:#FE640B;display:flex;align-items:center;justify-content:center"><i data-lucide="laptop" style="width:17px;height:17px"></i></span>
+        <span data-role="label" style="transition:opacity .25s ease;white-space:nowrap">Projects</span>
+      </a>
+      <a href="#opensource" data-target="opensource" style="position:relative;z-index:2;display:flex;align-items:center;gap:13px;height:48px;padding:0 12px;border-radius:13px;text-decoration:none;color:#6C6F85;font-size:14.5px;font-weight:500" style-hover="color:#4C4F69">
+        <span style="flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#FBE3F3;color:#EA76CB;display:flex;align-items:center;justify-content:center"><i data-lucide="git-branch" style="width:17px;height:17px"></i></span>
+        <span data-role="label" style="transition:opacity .25s ease;white-space:nowrap">Open Source</span>
+      </a>
+      <a href="#skills" data-target="skills" style="position:relative;z-index:2;display:flex;align-items:center;gap:13px;height:48px;padding:0 12px;border-radius:13px;text-decoration:none;color:#6C6F85;font-size:14.5px;font-weight:500" style-hover="color:#4C4F69">
+        <span style="flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#E1E8FE;color:#1E66F5;display:flex;align-items:center;justify-content:center"><i data-lucide="hammer" style="width:17px;height:17px"></i></span>
+        <span data-role="label" style="transition:opacity .25s ease;white-space:nowrap">Technical Skills</span>
+      </a>
+      <a href="#achievements" data-target="achievements" style="position:relative;z-index:2;display:flex;align-items:center;gap:13px;height:48px;padding:0 12px;border-radius:13px;text-decoration:none;color:#6C6F85;font-size:14.5px;font-weight:500" style-hover="color:#4C4F69">
+        <span style="flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#EBE0FB;color:#8839EF;display:flex;align-items:center;justify-content:center"><i data-lucide="trophy" style="width:17px;height:17px"></i></span>
+        <span data-role="label" style="transition:opacity .25s ease;white-space:nowrap">Achievements</span>
+      </a>
+      <a href="#education" data-target="education" style="position:relative;z-index:2;display:flex;align-items:center;gap:13px;height:48px;padding:0 12px;border-radius:13px;text-decoration:none;color:#6C6F85;font-size:14.5px;font-weight:500" style-hover="color:#4C4F69">
+        <span style="flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#E2EFDD;color:#40A02B;display:flex;align-items:center;justify-content:center"><i data-lucide="book-open" style="width:17px;height:17px"></i></span>
+        <span data-role="label" style="transition:opacity .25s ease;white-space:nowrap">Education</span>
+      </a>
+      <a href="#contact" data-target="contact" style="position:relative;z-index:2;display:flex;align-items:center;gap:13px;height:48px;padding:0 12px;border-radius:13px;text-decoration:none;color:#6C6F85;font-size:14.5px;font-weight:500" style-hover="color:#4C4F69">
+        <span style="flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#E1E8FE;color:#1E66F5;display:flex;align-items:center;justify-content:center"><i data-lucide="phone" style="width:17px;height:17px"></i></span>
+        <span data-role="label" style="transition:opacity .25s ease;white-space:nowrap">Contact</span>
+      </a>
+      <a href="#resume" data-target="resume" style="position:relative;z-index:2;display:flex;align-items:center;gap:13px;height:48px;padding:0 12px;border-radius:13px;text-decoration:none;color:#6C6F85;font-size:14.5px;font-weight:500" style-hover="color:#4C4F69">
+        <span style="flex:0 0 28px;width:28px;height:28px;border-radius:9px;background:#FDE7D5;color:#FE640B;display:flex;align-items:center;justify-content:center"><i data-lucide="file-text" style="width:17px;height:17px"></i></span>
+        <span data-role="label" style="transition:opacity .25s ease;white-space:nowrap">R&eacute;sum&eacute;</span>
+      </a>
+    </nav>
+
+    <div style="flex:0 0 auto;padding:14px 16px 18px;border-top:1px solid #DCE0E8;display:flex;flex-direction:column;gap:9px">
+      <a href="mailto:toastx.sol@gmail.com" data-role="label" style="display:flex;align-items:center;gap:9px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8C8FA1;text-decoration:none;transition:opacity .25s ease,color .2s ease;white-space:nowrap" style-hover="color:#8839EF">
+        <span style="width:6px;height:6px;border-radius:50%;background:#7287FD;flex:0 0 6px"></span>toastx.sol@gmail.com
+      </a>
+      <a href="https://github.com/toastx" data-role="label" style="display:flex;align-items:center;gap:9px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8C8FA1;text-decoration:none;transition:opacity .25s ease,color .2s ease;white-space:nowrap" style-hover="color:#8839EF">
+        <span style="width:6px;height:6px;border-radius:50%;background:#40A02B;flex:0 0 6px"></span>github.com/toastx
+      </a>
+    </div>
+  </aside>
+
+  <main id="doc" style="margin-top:46px;margin-left:264px;min-height:calc(100vh - 46px);transition:margin-left .42s cubic-bezier(.22,1,.36,1)">
+    <div style="max-width:940px;margin:0 auto;padding:56px 40px 0;display:flex;align-items:flex-start">
+      <div id="gutter" aria-hidden="true" style="flex:0 0 48px;width:48px;text-align:right;padding-right:18px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:28px;color:#BCC0CC;user-select:none;-webkit-user-select:none"></div>
+
+      <div id="content" style="flex:1 1 auto;min-width:0;border-left:1px solid #DCE0E8;padding-left:30px;background-image:repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(76,79,105,.05) 27px,rgba(76,79,105,.05) 28px);background-position:0 6px">
+
+        <section id="about" data-screen-label="About" style="margin:0 0 60px;scroll-margin-top:70px">
+          <h1 style="font-family:'IBM Plex Sans',sans-serif;font-size:40px;line-height:1.12;font-weight:700;color:#4C4F69;margin:0 0 6px;letter-spacing:-.01em">
+            <span id="typed" data-text="Dipesh NV (aka Toastx)">Dipesh NV (aka Toastx)</span><span id="cursor" style="display:inline-block;width:3px;height:.92em;background:#8839EF;border-radius:1px;margin-left:3px;vertical-align:-2px;animation:blink 1.05s steps(1) infinite"></span>
+          </h1>
+          <p style="font-family:'IBM Plex Mono',monospace;font-size:16px;color:#8839EF;margin:0 0 14px;font-weight:500">Rust &amp; Solana Engineer <span style="color:#7287FD">ಅ^•ﻐ•^ಅ</span></p>
+          <p style="font-size:16px;line-height:1.7;color:#6C6F85;margin:0 0 20px;max-width:60ch;text-wrap:pretty">Solana developer <span style="color:#7287FD">·</span> 6x hackathon winner <span style="color:#7287FD">·</span> Open-source contributor. I enjoy building trustless systems.</p>
+
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">
+            <span style="display:inline-flex;border-radius:6px;overflow:hidden;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;line-height:1"><span style="background:#E9E4DC;color:#6C6F85;padding:6px 9px">lang</span><span style="background:#EBE0FB;color:#8839EF;padding:6px 9px">Rust</span></span>
+            <span style="display:inline-flex;border-radius:6px;overflow:hidden;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;line-height:1"><span style="background:#E9E4DC;color:#6C6F85;padding:6px 9px">chain</span><span style="background:#E2EFDD;color:#40A02B;padding:6px 9px">Solana</span></span>
+            <span style="display:inline-flex;border-radius:6px;overflow:hidden;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500;line-height:1"><span style="background:#E9E4DC;color:#6C6F85;padding:6px 9px">lang</span><span style="background:#E1E8FE;color:#1E66F5;padding:6px 9px">TypeScript</span></span>
+            <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:#8839EF"></span>6x hackathon winner</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:#EA76CB"></span>open-source contributor</span>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:18px;font-family:'IBM Plex Mono',monospace;font-size:13.5px">
+            <a href="mailto:toastx.sol@gmail.com" style="color:#8839EF;text-decoration:none;font-weight:500;border-bottom:1px solid rgba(136,57,239,.3);padding-bottom:1px" style-hover="border-bottom-color:#8839EF">toastx.sol@gmail.com</a>
+            <a href="https://github.com/toastx" style="color:#8839EF;text-decoration:none;font-weight:500;border-bottom:1px solid rgba(136,57,239,.3);padding-bottom:1px" style-hover="border-bottom-color:#8839EF">github.com/toastx</a>
+          </div>
+        </section>
+
+        <section id="experience" data-screen-label="Experience" style="margin:0 0 60px;scroll-margin-top:70px">
+          <div style="display:flex;align-items:baseline;gap:11px;border-bottom:1px solid #CCD0DA;padding-bottom:11px;margin-bottom:26px">
+            <h2 style="font-family:'IBM Plex Sans',sans-serif;font-size:25px;font-weight:600;color:#4C4F69;margin:0;letter-spacing:-.01em">Experience</h2>
+          </div>
+
+          <article style="margin-bottom:34px">
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;margin-bottom:6px">
+              <h3 style="font-size:18px;font-weight:600;color:#4C4F69;margin:0"><span style="color:#8839EF">Sola AI</span> <span style="color:#ACB0BE;font-weight:400">/</span> Founder &amp; Developer</h3>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#9CA0B0;white-space:nowrap">Dec 2024–Present · Remote</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px;font-family:'IBM Plex Mono',monospace;font-size:12.5px">
+              <a href="https://github.com/TheSolaAI/sola-application" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a>
+              <a href="https://beta.solaai.xyz" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">live</a>
+            </div>
+            <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px">
+              <li style="display:flex;gap:11px;font-size:15px;line-height:1.62;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built an open-source voice assistant that turns natural language into Solana transactions, integrating <code style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:#EBE0FB;color:#8839EF;padding:1px 6px;border-radius:5px">10+ protocols</code> and <code style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:#EBE0FB;color:#8839EF;padding:1px 6px;border-radius:5px">20+ onchain actions</code> (swaps, LP, staking, account ops).</span></li>
+              <li style="display:flex;gap:11px;font-size:15px;line-height:1.62;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Implemented an intent parsing and routing layer that enforces signer requirements, program interfaces, and state preconditions before submission, achieving <code style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:#EBE0FB;color:#8839EF;padding:1px 6px;border-radius:5px">~90%</code> end-to-end transaction success across supported flows.</span></li>
+              <li style="display:flex;gap:11px;font-size:15px;line-height:1.62;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Onboarded <code style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:#EBE0FB;color:#8839EF;padding:1px 6px;border-radius:5px">500+ users</code> during initial launch and developed further executions based on real transaction failures and usage patterns.</span></li>
+            </ul>
+            <pre style="margin:16px 0 0;background:#E6E9EF;border:1px solid #CCD0DA;border-radius:11px;padding:0;overflow:hidden">
+<div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#DCE0E8;border-bottom:1px solid #CCD0DA;font-family:'IBM Plex Mono',monospace"><span style="width:8px;height:8px;border-radius:50%;background:#D20F39"></span><span style="width:8px;height:8px;border-radius:50%;background:#DF8E1D"></span><span style="width:8px;height:8px;border-radius:50%;background:#40A02B"></span><span style="margin-left:6px;font-size:11px;color:#9CA0B0">stack.ts</span></div>
+<code style="display:block;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.7;color:#6C6F85;white-space:pre-wrap"><span style="color:#8839EF">const</span> <span style="color:#1E66F5">stack</span> <span style="color:#9CA0B0">=</span> [<span style="color:#40A02B">"Rust"</span>, <span style="color:#40A02B">"TypeScript"</span>, <span style="color:#40A02B">"Django"</span>, <span style="color:#40A02B">"Axum"</span>, <span style="color:#40A02B">"PostgreSQL"</span>, <span style="color:#40A02B">"Prisma"</span>, <span style="color:#40A02B">"Solana Web3.js"</span>, <span style="color:#40A02B">"Next.js"</span>]<span style="color:#9CA0B0">;</span></code></pre>
+          </article>
+
+          <article>
+            <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;margin-bottom:6px">
+              <h3 style="font-size:18px;font-weight:600;color:#4C4F69;margin:0"><span style="color:#8839EF">Orion Innovation</span> <span style="color:#ACB0BE;font-weight:400">/</span> Software Development Intern</h3>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#9CA0B0;white-space:nowrap">Sep–Oct 2023 · Chennai</span>
+            </div>
+            <ul style="margin:8px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px">
+              <li style="display:flex;gap:11px;font-size:15px;line-height:1.62;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Maintained AngularJS modules in a production sports league management platform, modifying state handling, form validation, and API integration logic.</span></li>
+              <li style="display:flex;gap:11px;font-size:15px;line-height:1.62;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Developed scripts enabling data migration from PostgreSQL to MongoDB.</span></li>
+              <li style="display:flex;gap:11px;font-size:15px;line-height:1.62;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Developed NFT based authentication and seat allocation prototypes for a live ticketing system using React (frontend) and Python (backend services).</span></li>
+            </ul>
+            <pre style="margin:16px 0 0;background:#E6E9EF;border:1px solid #CCD0DA;border-radius:11px;padding:0;overflow:hidden">
+<div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#DCE0E8;border-bottom:1px solid #CCD0DA;font-family:'IBM Plex Mono',monospace"><span style="width:8px;height:8px;border-radius:50%;background:#D20F39"></span><span style="width:8px;height:8px;border-radius:50%;background:#DF8E1D"></span><span style="width:8px;height:8px;border-radius:50%;background:#40A02B"></span><span style="margin-left:6px;font-size:11px;color:#9CA0B0">stack.ts</span></div>
+<code style="display:block;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.7;color:#6C6F85;white-space:pre-wrap"><span style="color:#8839EF">const</span> <span style="color:#1E66F5">stack</span> <span style="color:#9CA0B0">=</span> [<span style="color:#40A02B">"AngularJS"</span>, <span style="color:#40A02B">"React"</span>, <span style="color:#40A02B">"Python"</span>, <span style="color:#40A02B">"PostgreSQL"</span>, <span style="color:#40A02B">"MongoDB"</span>]<span style="color:#9CA0B0">;</span></code></pre>
+          </article>
+        </section>
+
+        <section id="projects" data-screen-label="Projects" style="margin:0 0 60px;scroll-margin-top:70px">
+          <div style="display:flex;align-items:baseline;gap:11px;border-bottom:1px solid #CCD0DA;padding-bottom:11px;margin-bottom:26px">
+            <h2 style="font-family:'IBM Plex Sans',sans-serif;font-size:25px;font-weight:600;color:#4C4F69;margin:0;letter-spacing:-.01em">Projects</h2>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px;align-items:start">
+            <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#FE640B;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:0s">(=^・ω・^=)</span>
+              <image-slot id="proj-gaslite" shape="rounded" radius="12" placeholder="Drop a screenshot for Gaslite" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #FE640B;display:block;flex:0 0 auto"></span>
+                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">Gaslite</h3>
+                <span style="margin-left:auto;padding:2px 8px;border-radius:999px;border:1px solid #CCD0DA;color:#9CA0B0;font-size:10.5px;font-weight:500">Public</span>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">gaslite</span></div>
+              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">AI agent that optimizes Solidity smart contracts for gas on Mantle L2.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Axum</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Qdrant</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">Turso</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">DeepSeek</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Foundry</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Next.js</span></div>
+              <div data-pdetail>
+                <div>
+                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built an AI agent that optimizes Solidity smart contracts for gas on Mantle L2, retrieving YUL optimization patterns via RAG and generating optimized code with an LLM.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Implemented a closed-loop refinement cycle that verifies gas savings in a Foundry sandbox, retrying until tests pass and gas improves.</span></li></ul>
+                  <div style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:13px"><a href="https://gaslite-seven.vercel.app" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">live</a><a href="https://github.com/toastx/gaslite" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a></div>
+                </div>
+              </div>
+              <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
+            </div>
+            <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#D20F39;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:.35s">(=ఄωఄ=)</span>
+              <image-slot id="proj-strike" shape="rounded" radius="12" placeholder="Drop a screenshot for Strike" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #D20F39;display:block;flex:0 0 auto"></span>
+                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">Strike</h3>
+                <span style="margin-left:auto;padding:2px 8px;border-radius:999px;border:1px solid #CCD0DA;color:#9CA0B0;font-size:10.5px;font-weight:500">Public</span>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">strike</span></div>
+              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">5x leveraged prediction market on Sui, written in Move.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#F4D9DE;color:#D20F39;font-family:'IBM Plex Mono',monospace;font-size:11px">Move</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Sui</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">DeepBook</span></div>
+              <div data-pdetail>
+                <div>
+                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built a 5x leveraged prediction market on Sui (Move), engineering an atomic Margin Loop that abstracts borrowing, swapping, and position-opening into a single transaction.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Designed a permissionless liquidation architecture using an on-chain kinked interest rate model to dynamically calculate Health Factors and incentivize MEV keepers.</span></li></ul>
+                  <div style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:13px"><a href="https://www.strikeonsui.xyz/" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">live</a><a href="https://github.com/0Xsolcreator/margin-predict" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a></div>
+                </div>
+              </div>
+              <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
+            </div>
+            <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#40A02B;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:.7s">(=^‥^=)</span>
+              <image-slot id="proj-starkdev" shape="rounded" radius="12" placeholder="Drop a screenshot for StarkDev" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #40A02B;display:block;flex:0 0 auto"></span>
+                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">StarkDev</h3>
+                <span style="margin-left:auto;display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-size:10.5px;font-weight:500"><span style="width:5px;height:5px;border-radius:50%;background:#40A02B"></span>2,500+ downloads</span>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">starknet-dev-setup</span></div>
+              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">Rust CLI that automates StarkNet development environment setup.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Clap</span></div>
+              <div data-pdetail>
+                <div>
+                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Developed and published a Rust based CLI tool to automate StarkNet development environment setup and configuration, published as <code style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:#EBE0FB;color:#8839EF;padding:1px 6px;border-radius:5px">starkdev</code>.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Reached 2,500+ downloads on crates.io.</span></li></ul>
+                  <div style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:13px"><a href="https://crates.io/crates/starkdev" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">crates.io</a><a href="https://github.com/toastx/starknet-dev-setup" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a></div>
+                </div>
+              </div>
+              <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
+            </div>
+            <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#1E66F5;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:1.05s">(=｀ω´=)</span>
+              <image-slot id="proj-nexa" shape="rounded" radius="12" placeholder="Drop a screenshot for Nexa Toolkit" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #1E66F5;display:block;flex:0 0 auto"></span>
+                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">Nexa Toolkit</h3>
+                <span style="margin-left:auto;padding:2px 8px;border-radius:999px;border:1px solid #CCD0DA;color:#9CA0B0;font-size:10.5px;font-weight:500">Public</span>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">nexa-toolkit</span></div>
+              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">Developer framework for building pluggable voice assistants.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">TypeScript</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Next.js</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Solana Web3.js</span></div>
+              <div data-pdetail>
+                <div>
+                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built a developer framework enabling voice assistants through a pluggable framework.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Abstracted transaction building and execution flows to allow custom logic without modifying core orchestration code.</span></li></ul>
+                  
+                </div>
+              </div>
+              <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
+            </div>
+            <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#E64553;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:1.4s">(=^･ｪ･^=)</span>
+              <image-slot id="proj-shredr" shape="rounded" radius="12" fit="cover" src="shredr-banner.png" placeholder="Drop a screenshot for shredr.fun" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #E64553;display:block;flex:0 0 auto"></span>
+                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">shredr.fun</h3>
+                <span style="margin-left:auto;padding:2px 8px;border-radius:999px;border:1px solid #CCD0DA;color:#9CA0B0;font-size:10.5px;font-weight:500">Public</span>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">shredr_fun</span></div>
+              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">Disposable burner addresses on Solana. Like tempmail, for your wallet.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Solana</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">MagicBlock</span><span style="padding:4px 10px;border-radius:999px;background:#F8DCE0;color:#E64553;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">TypeScript</span></div>
+              <div data-pdetail>
+                <div>
+                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Spins up temporary burner addresses on demand, like tempmail but for your wallet, so your main account never touches the money trail.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built on Solana with MagicBlock ephemeral rollups for fast, low-cost throwaway sessions.</span></li></ul>
+                  <div style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:13px"><a href="https://shredr.fun/" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">live</a><a href="https://github.com/toastx/shredr_fun" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a></div>
+                </div>
+              </div>
+              <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
+            </div>
+            <div data-pcard tabindex="0" style="border:1px dashed #CBB8F2;border-radius:14px;padding:18px 20px 20px;background:repeating-linear-gradient(135deg,#FAFBFD,#FAFBFD 9px,#F6F4FB 9px,#F6F4FB 18px);position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#EA76CB;background:#FAFBFD;border:1px dashed #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:1.75s">(=｀ｵ´=)</span>
+              <image-slot id="proj-slot6" shape="rounded" radius="12" placeholder="Drop a screenshot here" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+                <span style="width:14px;height:11px;border-radius:2px;border:1.6px dashed #EA76CB;display:block;flex:0 0 auto"></span>
+                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#9CA0B0;margin:0;letter-spacing:-.01em">Open slot</h3>
+                <span style="margin-left:auto;padding:2px 9px;border-radius:999px;border:1px dashed #CBB8F2;color:#9CA0B0;font-size:10.5px;font-weight:500">awaiting info</span>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#ACB0BE">toastx</span><span style="color:#CBB8F2">/</span><span style="color:#9CA0B0">project-06</span></div>
+              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#9CA0B0;text-wrap:pretty">Reserved for an upcoming project. Send me the name, links, blurb, and stack and I will drop it right in here.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;border:1px dashed #CBB8F2;background:transparent;color:#9CA0B0;font-family:'IBM Plex Mono',monospace;font-size:11px">TBD</span></div>
+              <div data-pdetail>
+                <div>
+                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span><span style="color:#9CA0B0">Highlights and tech stack will appear here once you share the details.</span></span></li></ul>
+                </div>
+              </div>
+              <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
+            </div>
+          </div>
+        </section>
+
+        <section id="opensource" data-screen-label="Open Source" style="margin:0 0 60px;scroll-margin-top:70px">
+          <div style="display:flex;align-items:baseline;gap:11px;border-bottom:1px solid #CCD0DA;padding-bottom:11px;margin-bottom:26px">
+            <h2 style="font-family:'IBM Plex Sans',sans-serif;font-size:25px;font-weight:600;color:#4C4F69;margin:0;letter-spacing:-.01em">Open Source Contributions</h2>
+          </div>
+
+          <article style="margin-bottom:26px">
+            <h3 style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:#4C4F69;margin:0 0 10px;display:flex;align-items:center;gap:9px"><span style="width:7px;height:7px;border-radius:50%;background:#EA76CB"></span>MindsDB</h3>
+            <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px">
+              <li style="display:flex;gap:11px;font-size:15px;line-height:1.62;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Implemented the <code style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:#EBE0FB;color:#8839EF;padding:1px 6px;border-radius:5px">sales_channels</code> table and associated data handlers, schema mapping, and connector logic for the Shopify integration.</span></li>
+              <li style="display:flex;gap:11px;font-size:15px;line-height:1.62;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Resolved a production bug in the Sendinblue email integration, fixing payload handling and restoring reliable email delivery.</span></li>
+            </ul>
+          </article>
+
+          <article>
+            <h3 style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:#4C4F69;margin:0 0 10px;display:flex;align-items:center;gap:9px"><span style="width:7px;height:7px;border-radius:50%;background:#FE640B"></span>Rede</h3>
+            <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px">
+              <li style="display:flex;gap:11px;font-size:15px;line-height:1.62;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Developed CLI feature extensions, adding new filetype support and commands, improving developer workflows for file operations.</span></li>
+            </ul>
+          </article>
+        </section>
+
+        <section id="skills" data-screen-label="Technical Skills" style="margin:0 0 60px;scroll-margin-top:70px">
+          <div style="display:flex;align-items:baseline;gap:11px;border-bottom:1px solid #CCD0DA;padding-bottom:11px;margin-bottom:26px">
+            <h2 style="font-family:'IBM Plex Sans',sans-serif;font-size:25px;font-weight:600;color:#4C4F69;margin:0;letter-spacing:-.01em">Technical Skills</h2>
+          </div>
+          <div style="border:1px solid #CCD0DA;border-radius:12px;overflow:hidden">
+            <table style="width:100%;border-collapse:collapse;font-size:14px">
+              <tbody>
+                <tr style="border-bottom:1px solid #DCE0E8">
+                  <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Languages</td>
+                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">TypeScript</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Python</span><span style="padding:4px 10px;border-radius:999px;background:#F4D9DE;color:#D20F39;font-family:'IBM Plex Mono',monospace;font-size:11px">Move</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">Solidity</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">Yul</span></div></td>
+                </tr>
+                <tr style="border-bottom:1px solid #DCE0E8">
+                  <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Web3 &amp; Smart Contracts</td>
+                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Solana (Anchor, Web3.js)</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">EVM (Foundry)</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Sui</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">DeFi Architecture</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">Metaplex cNFTs</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">IPFS</span></div></td>
+                </tr>
+                <tr style="border-bottom:1px solid #DCE0E8">
+                  <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Backend &amp; Databases</td>
+                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Axum</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Django</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">PostgreSQL</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">Turso</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Qdrant (Vector DB)</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Prisma</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Docker</span></div></td>
+                </tr>
+                <tr>
+                  <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Web &amp; AI Architecture</td>
+                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Next.js</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">React</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">RAG</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">Agentic Workflows</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">DeepSeek</span></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="achievements" data-screen-label="Achievements" style="margin:0 0 60px;scroll-margin-top:70px">
+          <div style="display:flex;align-items:baseline;gap:11px;border-bottom:1px solid #CCD0DA;padding-bottom:11px;margin-bottom:26px">
+            <h2 style="font-family:'IBM Plex Sans',sans-serif;font-size:25px;font-weight:600;color:#4C4F69;margin:0;letter-spacing:-.01em">Achievements</h2>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <span style="flex:0 0 auto;margin-top:2px;padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500">Winner</span>
+              <p style="margin:0;font-size:15px;line-height:1.6;color:#5C5F77"><strong style="color:#4C4F69;font-weight:600">Router &amp; Push Protocol track, Unfold 2023.</strong> Built a cross-chain token-gated chat app on Polygon.</p>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <span style="flex:0 0 auto;margin-top:2px;padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500">Winner</span>
+              <p style="margin:0;font-size:15px;line-height:1.6;color:#5C5F77"><strong style="color:#4C4F69;font-weight:600">Consumer Apps track, Build on Aptos 2025.</strong> Built a Fruit Ninja inspired game using gasless transactions.</p>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <span style="flex:0 0 auto;margin-top:2px;padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500">Speaker</span>
+              <p style="margin:0;font-size:15px;line-height:1.6;color:#5C5F77"><strong style="color:#4C4F69;font-weight:600">Technical sessions</strong> at regional Solana events and campus workshops.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="education" data-screen-label="Education" style="margin:0 0 60px;scroll-margin-top:70px">
+          <div style="display:flex;align-items:baseline;gap:11px;border-bottom:1px solid #CCD0DA;padding-bottom:11px;margin-bottom:26px">
+            <h2 style="font-family:'IBM Plex Sans',sans-serif;font-size:25px;font-weight:600;color:#4C4F69;margin:0;letter-spacing:-.01em">Education</h2>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:10px 18px;border:1px solid #CCD0DA;border-radius:14px;padding:20px 22px;background:#FAFBFD">
+            <div>
+              <h3 style="font-size:17px;font-weight:600;color:#4C4F69;margin:0 0 4px">B.E. in Computer Science and Engineering</h3>
+              <p style="margin:0;font-size:14.5px;color:#6C6F85">VIT Chennai <span style="color:#7287FD">·</span> <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#9CA0B0">2021–2025</span></p>
+            </div>
+            <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:#8839EF"></span>CGPA 8.5</span>
+          </div>
+        </section>
+
+        <section id="contact" data-screen-label="Contact" style="margin:0 0 60px;scroll-margin-top:70px">
+          <div style="display:flex;align-items:baseline;gap:11px;border-bottom:1px solid #CCD0DA;padding-bottom:11px;margin-bottom:26px"><h2 style="font-family:'IBM Plex Sans',sans-serif;font-size:25px;font-weight:600;color:#4C4F69;margin:0;letter-spacing:-.01em">Contact</h2></div>
+          <p style="font-size:16px;line-height:1.7;color:#6C6F85;margin:0 0 20px;max-width:60ch;text-wrap:pretty">Open to roles and collaborations in Rust, Solana, and on-chain systems. The fastest way to reach me is email.</p>
+
+          <div style="border:1px solid #CCD0DA;border-radius:14px;background:#FAFBFD;overflow:hidden;margin-bottom:18px">
+            <div style="display:flex;align-items:center;gap:7px;padding:9px 14px;background:#E6E9EF;border-bottom:1px solid #CCD0DA;font-family:'IBM Plex Mono',monospace">
+              <span style="width:8px;height:8px;border-radius:50%;background:#D20F39"></span><span style="width:8px;height:8px;border-radius:50%;background:#DF8E1D"></span><span style="width:8px;height:8px;border-radius:50%;background:#40A02B"></span>
+              <span style="margin-left:6px;font-size:11px;color:#9CA0B0">status.live</span>
+              <span style="flex:1"></span>
+              <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#40A02B"><span style="width:7px;height:7px;border-radius:50%;background:#40A02B;animation:pulse 1.8s ease-in-out infinite"></span>live</span>
+            </div>
+            <div style="padding:18px;display:flex;flex-wrap:wrap;gap:16px 34px;align-items:flex-end">
+              <div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9CA0B0;letter-spacing:.04em;margin-bottom:6px">local time &middot; IST</div>
+                <div id="clock" style="font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:#4C4F69;letter-spacing:.02em">--:--:--</div>
+              </div>
+              <div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9CA0B0;letter-spacing:.04em;margin-bottom:6px">availability</div>
+                <div style="display:flex;align-items:center;gap:8px"><span id="availDot" style="width:9px;height:9px;border-radius:50%;background:#40A02B;transition:background .4s ease"></span><span id="avail" style="font-size:15px;font-weight:500;color:#5C5F77">Likely online</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;border:1px solid #CCD0DA;border-radius:12px;padding:13px 16px;background:#FAFBFD">
+              <span style="width:8px;height:8px;border-radius:50%;background:#7287FD;flex:0 0 8px"></span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9CA0B0;width:48px">email</span>
+              <a href="mailto:toastx.sol@gmail.com" style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">toastx.sol@gmail.com</a>
+              <span style="flex:1"></span>
+              <button id="copyEmail" data-label="copy" data-copy="toastx.sol@gmail.com" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8C8FA1;background:#EBE0FB;border:1px solid #DCE0E8;border-radius:7px;padding:5px 11px;cursor:pointer;transition:color .2s ease,background .2s ease" style-hover="background:#EBE0FB;color:#8839EF">copy</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;border:1px solid #CCD0DA;border-radius:12px;padding:13px 16px;background:#FAFBFD">
+              <span style="width:8px;height:8px;border-radius:50%;background:#40A02B;flex:0 0 8px"></span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9CA0B0;width:48px">github</span>
+              <a href="https://github.com/toastx" style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">github.com/toastx</a>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;border:1px solid #CCD0DA;border-radius:12px;padding:13px 16px;background:#FAFBFD">
+              <span style="width:8px;height:8px;border-radius:50%;background:#1E66F5;flex:0 0 8px"></span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9CA0B0;width:48px">twitter</span>
+              <a href="https://twitter.com/Dxddytoast" style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">@Dxddytoast</a>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;border:1px solid #CCD0DA;border-radius:12px;padding:13px 16px;background:#FAFBFD">
+              <span style="width:8px;height:8px;border-radius:50%;background:#8839EF;flex:0 0 8px"></span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9CA0B0;width:48px">discord</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5C5F77">toastx.jpeg</span>
+              <span style="flex:1"></span>
+              <button data-label="copy" data-copy="toastx.jpeg" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8C8FA1;background:#EBE0FB;border:1px solid #DCE0E8;border-radius:7px;padding:5px 11px;cursor:pointer;transition:color .2s ease,background .2s ease" style-hover="background:#EBE0FB;color:#8839EF">copy</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="resume" data-screen-label="R&eacute;sum&eacute;" style="margin:0 0 52px;scroll-margin-top:70px">
+          <div style="display:flex;align-items:baseline;gap:11px;border-bottom:1px solid #CCD0DA;padding-bottom:11px;margin-bottom:26px"><h2 style="font-family:'IBM Plex Sans',sans-serif;font-size:25px;font-weight:600;color:#4C4F69;margin:0;letter-spacing:-.01em">R&eacute;sum&eacute;</h2></div>
+          <p style="font-size:16px;line-height:1.7;color:#6C6F85;margin:0 0 18px;max-width:60ch;text-wrap:pretty">A one-page PDF with everything above, ready to download.</p>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;border:1px solid #CCD0DA;border-radius:14px;padding:16px 18px;background:#FAFBFD">
+            <div style="display:flex;align-items:center;gap:14px;min-width:0">
+              <span style="flex:0 0 auto;width:34px;height:42px;border-radius:5px;border:1.6px solid #FE640B;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#FE640B;font-weight:600">PDF</span>
+              <div style="min-width:0">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#4C4F69;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">toastx_resume.pdf</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#9CA0B0">Dipesh NV &middot; Rust &amp; Solana Engineer</div>
+              </div>
+            </div>
+            <a href="toastx_resume.pdf" download="toastx_resume.pdf" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:9px;background:#8839EF;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;padding:10px 18px;border-radius:10px;text-decoration:none;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease,background .2s ease" style-hover="transform:translateY(-2px);box-shadow:0 10px 24px rgba(136,57,239,.30);background:#7A2FD6">
+              <span style="font-size:15px">&#8595;</span> Download
+            </a>
+          </div>
+        </section>
+
+        <p style="margin:6px 0 0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#ACB0BE;text-align:center">&lt;/ end of file &gt;  (=˘ω˘=) zzz</p>
+
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:860},&quot;sidebarDefault&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;expanded&quot;,&quot;collapsed&quot;],&quot;default&quot;:&quot;expanded&quot;,&quot;tsType&quot;:&quot;'expanded'|'collapsed'&quot;},&quot;headerMotion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;typewriter&quot;,&quot;fade&quot;,&quot;none&quot;],&quot;default&quot;:&quot;typewriter&quot;,&quot;tsType&quot;:&quot;'typewriter'|'fade'|'none'&quot;},&quot;showLineNumbers&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    const $ = (id) => document.getElementById(id);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const props = this.props || {};
+
+    const sidebar = $('sidebar'), doc = $('doc'), nav = $('navlist'),
+          pill = $('navpill'), bar = $('navbar'),
+          collapseBtn = $('collapseBtn'), menuBtn = $('menuBtn'),
+          backdrop = $('backdrop'), gutter = $('gutter'), content = $('content'),
+          progress = $('progress'), statusEl = $('statusLn'), chev = $('chev');
+
+    const items = Array.from(document.querySelectorAll('[data-target]'));
+    const sections = items.map((i) => document.getElementById(i.dataset.target)).filter(Boolean);
+    const labels = Array.from(document.querySelectorAll('[data-role="label"]'));
+
+    const EXPANDED = 264, COLLAPSED = 68, TITLEBAR = 46;
+    this._collapsed = props.sidebarDefault === 'collapsed';
+    this._peek = false;
+    this._mobile = window.innerWidth <= 820;
+    this._drawer = false;
+    this._active = null;
+
+    const showLineNumbers = props.showLineNumbers !== false;
+    if (!showLineNumbers && gutter) { gutter.style.display = 'none'; }
+
+    const setLabels = (show) => {
+      labels.forEach((l) => { l.style.opacity = show ? '1' : '0'; });
+      if (chev) chev.style.transform = (this._collapsed && !this._mobile) ? 'rotate(-135deg)' : 'rotate(45deg)';
+    };
+
+    const positionPill = () => {
+      const it = items.find((i) => i.dataset.target === this._active) || items[0];
+      if (!it) return;
+      pill.style.transform = 'translateY(' + (it.offsetTop - 6) + 'px)';
+      pill.style.height = it.offsetHeight + 'px';
+      pill.style.opacity = '1';
+      bar.style.transform = 'translateY(' + (it.offsetTop - 6 + (it.offsetHeight - 22) / 2) + 'px)';
+      bar.style.opacity = '1';
+    };
+
+    const applyWidths = () => {
+      if (this._mobile) {
+        sidebar.style.width = EXPANDED + 'px';
+        sidebar.style.transform = this._drawer ? 'translateX(0)' : 'translateX(-100%)';
+        sidebar.style.boxShadow = this._drawer ? '0 24px 60px rgba(73,77,100,.22)' : 'none';
+        doc.style.marginLeft = '0px';
+        if (menuBtn) menuBtn.style.display = 'flex';
+        if (collapseBtn) collapseBtn.style.display = 'none';
+        setLabels(true);
+      } else {
+        const peeking = this._collapsed && this._peek;
+        const w = (this._collapsed && !peeking) ? COLLAPSED : EXPANDED;
+        sidebar.style.transform = 'translateX(0)';
+        sidebar.style.width = w + 'px';
+        sidebar.style.boxShadow = peeking ? '10px 0 44px rgba(73,77,100,.12)' : 'none';
+        doc.style.marginLeft = (this._collapsed ? COLLAPSED : EXPANDED) + 'px';
+        if (menuBtn) menuBtn.style.display = 'none';
+        if (collapseBtn) collapseBtn.style.display = 'flex';
+        setLabels(!(this._collapsed && !peeking));
+      }
+      positionPill();
+    };
+
+    const updateActive = (id) => {
+      if (this._active === id) return;
+      this._active = id;
+      items.forEach((it) => {
+        const on = it.dataset.target === id;
+        it.style.color = on ? '#4C4F69' : '#6C6F85';
+        it.style.fontWeight = on ? '600' : '500';
+      });
+      positionPill();
+    };
+
+    const buildGutter = () => {
+      if (!showLineNumbers || !content || !gutter) return;
+      const lh = 28;
+      const h = content.offsetHeight;
+      const n = Math.max(1, Math.ceil(h / lh));
+      const frag = document.createDocumentFragment();
+      for (let i = 1; i <= n; i++) {
+        const d = document.createElement('div');
+        d.style.height = lh + 'px';
+        d.textContent = i;
+        frag.appendChild(d);
+      }
+      gutter.textContent = '';
+      gutter.appendChild(frag);
+    };
+
+    // ---- header motion ----
+    const typed = $('typed'), cursor = $('cursor');
+    const motion = props.headerMotion || 'typewriter';
+    if (typed) {
+      const full = typed.getAttribute('data-text') || typed.textContent;
+      if (reduce || motion === 'none') {
+        typed.textContent = full;
+        if (cursor) cursor.style.display = 'none';
+      } else if (motion === 'fade') {
+        typed.textContent = full;
+        if (cursor) cursor.style.display = 'none';
+        typed.style.opacity = '0';
+        typed.style.transform = 'translateY(8px)';
+        typed.style.transition = 'opacity .8s ease, transform .8s cubic-bezier(.22,1,.36,1)';
+        requestAnimationFrame(() => { typed.style.opacity = '1'; typed.style.transform = 'none'; });
+      } else {
+        typed.textContent = '';
+        let i = 0;
+        const tick = () => {
+          typed.textContent = full.slice(0, i);
+          i++;
+          if (i <= full.length) setTimeout(tick, 42 + Math.random() * 46);
+        };
+        setTimeout(tick, 380);
+      }
+    }
+
+    // ---- reveal on scroll ----
+    if (!reduce) {
+      sections.forEach((s) => {
+        const r = s.getBoundingClientRect();
+        if (r.top > window.innerHeight * 0.82) {
+          s.style.opacity = '0';
+          s.style.transform = 'translateY(22px)';
+          s.style.transition = 'opacity .7s ease, transform .75s cubic-bezier(.22,1,.36,1)';
+        }
+      });
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'none';
+            io.unobserve(e.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
+      sections.forEach((s) => io.observe(s));
+    }
+
+    // ---- scroll handling ----
+    const onScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const p = h > 0 ? Math.min(1, Math.max(0, y / h)) : 0;
+      progress.style.transform = 'scaleX(' + p + ')';
+      const ln = Math.max(1, Math.round(y / 28) + 1);
+      statusEl.textContent = 'Ln ' + ln + '  ·  ' + Math.round(p * 100) + '%';
+      let cur = sections.length ? sections[0].id : null;
+      for (const s of sections) {
+        if (s.getBoundingClientRect().top <= 150) cur = s.id;
+      }
+      if (cur) updateActive(cur);
+    };
+
+    let raf = false;
+    window.addEventListener('scroll', () => {
+      if (!raf) { raf = true; requestAnimationFrame(() => { onScroll(); raf = false; }); }
+    }, { passive: true });
+
+    // ---- lenis smooth scroll ----
+    let lenis = null;
+    if (!reduce && window.Lenis) {
+      lenis = new window.Lenis({
+        lerp: 0.085,
+        smoothWheel: true,
+        syncTouch: true,
+        wheelMultiplier: 0.9,
+        touchMultiplier: 1.5
+      });
+      const loop = (time) => { lenis.raf(time); requestAnimationFrame(loop); };
+      requestAnimationFrame(loop);
+    }
+    const scrollTo = (top) => {
+      if (lenis) lenis.scrollTo(top, { duration: 1.2, easing: (t) => 1 - Math.pow(1 - t, 3) });
+      else window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+    };
+
+    // ---- window controls (titlebar dots) ----
+    document.querySelectorAll('#wctrl button').forEach((b) => {
+      b.addEventListener('click', () => {
+        const a = b.dataset.win;
+        if (a === 'max') {
+          if (document.fullscreenElement) document.exitFullscreen();
+          else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+        } else if (a === 'min') {
+          scrollTo(0);
+        } else {
+          window.close();
+        }
+      });
+    });
+
+    // ---- nav clicks ----
+    items.forEach((it) => {
+      it.addEventListener('click', (e) => {
+        e.preventDefault();
+        const t = document.getElementById(it.dataset.target);
+        if (!t) return;
+        const top = t.getBoundingClientRect().top + window.scrollY - 64;
+        scrollTo(top);
+        if (this._mobile && this._drawer) {
+          this._drawer = false;
+          backdrop.style.opacity = '0';
+          backdrop.style.pointerEvents = 'none';
+          applyWidths();
+        }
+        updateActive(it.dataset.target);
+      });
+    });
+
+    // ---- collapse + peek ----
+    if (collapseBtn) collapseBtn.addEventListener('click', () => {
+      this._collapsed = !this._collapsed;
+      this._peek = false;
+      applyWidths();
+    });
+    sidebar.addEventListener('mouseenter', () => {
+      if (!this._mobile && this._collapsed) { this._peek = true; applyWidths(); }
+    });
+    sidebar.addEventListener('mouseleave', () => {
+      if (this._peek) { this._peek = false; applyWidths(); }
+    });
+
+    // ---- mobile drawer ----
+    if (menuBtn) menuBtn.addEventListener('click', () => {
+      this._drawer = !this._drawer;
+      backdrop.style.opacity = this._drawer ? '1' : '0';
+      backdrop.style.pointerEvents = this._drawer ? 'auto' : 'none';
+      applyWidths();
+    });
+    if (backdrop) backdrop.addEventListener('click', () => {
+      this._drawer = false;
+      backdrop.style.opacity = '0';
+      backdrop.style.pointerEvents = 'none';
+      applyWidths();
+    });
+
+    // ---- resize ----
+    window.addEventListener('resize', () => {
+      const wasMobile = this._mobile;
+      this._mobile = window.innerWidth <= 820;
+      if (!this._mobile) this._drawer = false;
+      if (wasMobile !== this._mobile) { backdrop.style.opacity = '0'; backdrop.style.pointerEvents = 'none'; }
+      applyWidths();
+      buildGutter();
+    });
+
+    // ---- copy buttons ----
+    document.querySelectorAll('[data-copy]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const orig = btn.getAttribute('data-label') || 'copy';
+        const origColor = btn.style.color;
+        const done = () => {
+          btn.textContent = 'copied \u2713';
+          btn.style.color = '#40A02B';
+          setTimeout(() => { btn.textContent = orig; btn.style.color = origColor; }, 1500);
+        };
+        const val = btn.getAttribute('data-copy') || '';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(val).then(done, done);
+        } else { done(); }
+      });
+    });
+
+    // ---- live status tracker (IST) ----
+    const clockEl = $('clock'), availEl = $('avail'), availDot = $('availDot');
+    if (clockEl || availEl) {
+      const TZ = 'Asia/Kolkata';
+      const tick = () => {
+        const now = new Date();
+        if (clockEl) clockEl.textContent = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(now);
+        const h = parseInt(new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', hourCycle: 'h23' }).format(now), 10);
+        const awake = h >= 9 && h < 24;
+        if (availEl) availEl.textContent = awake ? 'Likely online' : 'Probably asleep';
+        if (availDot) availDot.style.background = awake ? '#40A02B' : '#FE640B';
+      };
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    // ---- lucide icons ----
+    (function initIcons(){ if (window.lucide && window.lucide.createIcons) { window.lucide.createIcons(); } else { setTimeout(initIcons, 60); } })();
+
+    // ---- animated cat dividers between sections ----
+    const makeDivider = () => {
+      const d = document.createElement('div');
+      d.setAttribute('aria-hidden', 'true');
+      d.style.cssText = 'display:flex;align-items:center;gap:16px;margin:6px 0 44px';
+      const lineA = '';
+      const catA = reduce ? '' : 'animation:catbob 3s ease-in-out infinite;';
+      d.innerHTML = '<span style="flex:1;height:1px;background:#CBB8F2;transform-origin:right center;' + lineA + '"></span><span style="font-family:monospace;font-size:12px;color:#9CA0B0;white-space:nowrap;' + catA + '">=^..^=</span><span style="flex:1;height:1px;background:#CBB8F2;transform-origin:left center;' + lineA + '"></span>';
+      return d;
+    };
+    sections.forEach((s, idx) => {
+      if (idx === 0) return;
+      s.parentNode.insertBefore(makeDivider(), s);
+    });
+
+    // ---- init ----
+    applyWidths();
+    buildGutter();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => { buildGutter(); applyWidths(); });
+    }
+    onScroll();
+  }
+
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
