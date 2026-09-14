@@ -29,6 +29,25 @@
     .lenis.lenis-smooth{scroll-behavior:auto!important}
     .lenis.lenis-stopped{overflow:hidden}
     [data-pcard]:hover,[data-pcard]:focus-within{transform:translateY(-4px);box-shadow:0 18px 40px rgba(73,77,100,.16);border-color:#CBB8F2;z-index:2;outline:none}
+    /* ponytail: one fixed backdrop-filter pane instead of blurring every other
+       element - filter on an ancestor can't be undone on a descendant, so the
+       hovered card is simply raised above the pane and stays sharp. */
+    #pfocus{position:fixed;inset:0;z-index:50;background:rgba(239,241,245,.28);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:opacity .5s cubic-bezier(.4,0,.2,1)}
+    #ide:has([data-pcard]:hover) #pfocus,#ide:has([data-pcard]:focus-within) #pfocus,#ide:has(#rview:hover) #pfocus,#ide:has(#rview:focus-within) #pfocus{opacity:1}
+    [data-pcard]:hover,[data-pcard]:focus-within{z-index:51}
+    @media (hover:none){#pfocus{display:none}}
+    @media (prefers-reduced-motion:reduce){#pfocus{transition:none}}
+    /* resume hover-preview: panel is a child of the hover target and its box
+       touches the button (the 10px gap is padding), so the cursor can walk into
+       it without the :hover ever dropping. Leaving the panel closes it. */
+    #rview{position:relative;display:inline-flex}
+    #rview:hover,#rview:focus-within{z-index:51}
+    #rview-panel{position:absolute;bottom:100%;right:0;padding-bottom:10px;width:min(660px,76vw);z-index:55;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .34s cubic-bezier(.4,0,.2,1),transform .34s cubic-bezier(.4,0,.2,1),visibility 0s .34s}
+    #rview:hover #rview-panel,#rview:focus-within #rview-panel{opacity:1;visibility:visible;transform:none;transition-delay:0s,0s,0s}
+    #rview-panel>div{height:min(580px,64vh);display:flex;flex-direction:column;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:14px;box-shadow:0 24px 60px rgba(73,77,100,.24);overflow:hidden}
+    #rview-panel iframe{flex:1;width:100%;border:0;background:#EFF1F5}
+    @media (hover:none){#rview-panel{display:none}}
+    @media (prefers-reduced-motion:reduce){#rview-panel{transition:opacity .01s,visibility 0s}}
     [data-pdetail]{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .46s cubic-bezier(.22,1,.36,1),opacity .4s ease}
     [data-pcard]:hover [data-pdetail],[data-pcard]:focus-within [data-pdetail]{grid-template-rows:1fr;opacity:1}
     [data-pdetail]>div{overflow:hidden;min-height:0}
@@ -63,6 +82,7 @@
   </div>
 
   <div id="backdrop" style="position:fixed;inset:46px 0 0 0;z-index:38;background:rgba(76,79,105,.32);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .35s ease"></div>
+  <div id="pfocus" aria-hidden="true"></div>
 
   <aside id="sidebar" style="position:fixed;top:46px;left:0;bottom:0;width:264px;z-index:42;background:#E6E9EF;border-right:1px solid #DCE0E8;overflow:hidden;display:flex;flex-direction:column;transition:width .42s cubic-bezier(.22,1,.36,1),transform .42s cubic-bezier(.22,1,.36,1),box-shadow .42s ease">
     <div style="display:flex;align-items:center;height:48px;padding:0 12px 0 16px;flex:0 0 auto">
@@ -199,26 +219,26 @@
 
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px;align-items:start">
             <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
-              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#FE640B;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:0s">(=^・ω・^=)</span>
-              <image-slot id="proj-gaslite" shape="rounded" radius="12" placeholder="Drop a screenshot for Gaslite" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#E64553;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:0.00s">(=^･ｪ･^=)</span>
+              <image-slot id="proj-shredr" shape="rounded" radius="12" fit="cover" src="shredr-banner.png" placeholder="Drop a screenshot for shredr.fun" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
               <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
-                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #FE640B;display:block;flex:0 0 auto"></span>
-                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">Gaslite</h3>
+                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #E64553;display:block;flex:0 0 auto"></span>
+                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">shredr.fun</h3>
                 <span style="margin-left:auto;padding:2px 8px;border-radius:999px;border:1px solid #CCD0DA;color:#9CA0B0;font-size:10.5px;font-weight:500">Public</span>
               </div>
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">gaslite</span></div>
-              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">AI agent that optimizes Solidity smart contracts for gas on Mantle L2.</p>
-              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Axum</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Qdrant</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">Turso</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">DeepSeek</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Foundry</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Next.js</span></div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">shredr_fun</span></div>
+              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">Disposable burner addresses on Solana. Like tempmail, for your wallet.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Solana</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">MagicBlock</span><span style="padding:4px 10px;border-radius:999px;background:#F8DCE0;color:#E64553;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">TypeScript</span></div>
               <div data-pdetail>
                 <div>
-                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built an AI agent that optimizes Solidity smart contracts for gas on Mantle L2, retrieving YUL optimization patterns via RAG and generating optimized code with an LLM.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Implemented a closed-loop refinement cycle that verifies gas savings in a Foundry sandbox, retrying until tests pass and gas improves.</span></li></ul>
-                  <div style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:13px"><a href="https://gaslite-seven.vercel.app" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">live</a><a href="https://github.com/toastx/gaslite" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a></div>
+                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Spins up temporary burner addresses on demand, like tempmail but for your wallet, so your main account never touches the money trail.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built on Solana with MagicBlock ephemeral rollups for fast, low-cost throwaway sessions.</span></li></ul>
+                  <div style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:13px"><a href="https://shredr.fun/" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">live</a><a href="https://github.com/toastx/shredr_fun" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a></div>
                 </div>
               </div>
               <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
             </div>
             <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
-              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#D20F39;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:.35s">(=ఄωఄ=)</span>
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#D20F39;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:0.35s">(=ఄωఄ=)</span>
               <image-slot id="proj-strike" shape="rounded" radius="12" placeholder="Drop a screenshot for Strike" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
               <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
                 <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #D20F39;display:block;flex:0 0 auto"></span>
@@ -237,7 +257,7 @@
               <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
             </div>
             <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
-              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#40A02B;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:.7s">(=^‥^=)</span>
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#40A02B;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:0.70s">(=^‥^=)</span>
               <image-slot id="proj-starkdev" shape="rounded" radius="12" placeholder="Drop a screenshot for StarkDev" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
               <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
                 <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #40A02B;display:block;flex:0 0 auto"></span>
@@ -256,7 +276,26 @@
               <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
             </div>
             <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
-              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#1E66F5;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:1.05s">(=｀ω´=)</span>
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#FE640B;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:1.05s">(=^・ω・^=)</span>
+              <image-slot id="proj-gaslite" shape="rounded" radius="12" placeholder="Drop a screenshot for Gaslite" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #FE640B;display:block;flex:0 0 auto"></span>
+                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">Gaslite</h3>
+                <span style="margin-left:auto;padding:2px 8px;border-radius:999px;border:1px solid #CCD0DA;color:#9CA0B0;font-size:10.5px;font-weight:500">Public</span>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">gaslite</span></div>
+              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">AI agent that optimizes Solidity smart contracts for gas on Mantle L2.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Axum</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Qdrant</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">Turso</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">DeepSeek</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Foundry</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Next.js</span></div>
+              <div data-pdetail>
+                <div>
+                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built an AI agent that optimizes Solidity smart contracts for gas on Mantle L2, retrieving YUL optimization patterns via RAG and generating optimized code with an LLM.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Implemented a closed-loop refinement cycle that verifies gas savings in a Foundry sandbox, retrying until tests pass and gas improves.</span></li></ul>
+                  <div style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:13px"><a href="https://gaslite-seven.vercel.app" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">live</a><a href="https://github.com/toastx/gaslite" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a></div>
+                </div>
+              </div>
+              <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
+            </div>
+            <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#1E66F5;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:1.40s">(=｀ω´=)</span>
               <image-slot id="proj-nexa" shape="rounded" radius="12" placeholder="Drop a screenshot for Nexa Toolkit" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
               <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
                 <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #1E66F5;display:block;flex:0 0 auto"></span>
@@ -275,20 +314,20 @@
               <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
             </div>
             <div data-pcard tabindex="0" style="border:1px solid #CCD0DA;border-radius:14px;padding:18px 20px 20px;background:#FAFBFD;position:relative;display:flex;flex-direction:column;cursor:default;transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s ease,border-color .4s ease">
-              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#E64553;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:1.4s">(=^･ｪ･^=)</span>
-              <image-slot id="proj-shredr" shape="rounded" radius="12" fit="cover" src="shredr-banner.png" placeholder="Drop a screenshot for shredr.fun" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
+              <span aria-hidden="true" style="position:absolute;top:-13px;right:16px;z-index:4;font-family:'IBM Plex Mono',monospace;font-size:14px;color:#EA76CB;background:#FAFBFD;border:1px solid #CBB8F2;border-radius:999px;padding:4px 11px;box-shadow:0 4px 12px rgba(73,77,100,.10);animation:catbob 3.2s ease-in-out infinite;animation-delay:1.75s">(=｀ｵ´=)</span>
+              <image-slot id="proj-pyth" shape="rounded" radius="12" fit="cover" src="pyth-banner.png" placeholder="Drop a screenshot for Pyth WebSockets" style="display:block;width:100%;height:140px;margin-bottom:15px"></image-slot>
               <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
-                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #E64553;display:block;flex:0 0 auto"></span>
-                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">shredr.fun</h3>
+                <span style="width:14px;height:11px;border-radius:2px;border:1.6px solid #EA76CB;display:block;flex:0 0 auto"></span>
+                <h3 style="font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;color:#4C4F69;margin:0;letter-spacing:-.01em">Pyth WebSockets</h3>
                 <span style="margin-left:auto;padding:2px 8px;border-radius:999px;border:1px solid #CCD0DA;color:#9CA0B0;font-size:10.5px;font-weight:500">Public</span>
               </div>
-              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">shredr_fun</span></div>
-              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">Disposable burner addresses on Solana. Like tempmail, for your wallet.</p>
-              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Solana</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">MagicBlock</span><span style="padding:4px 10px;border-radius:999px;background:#F8DCE0;color:#E64553;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">TypeScript</span></div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:11px"><span style="color:#9CA0B0">toastx</span><span style="color:#ACB0BE">/</span><span style="color:#8839EF">rust-pyth-websockets</span></div>
+              <p style="margin:0 0 13px;font-size:14px;line-height:1.55;color:#5C5F77;text-wrap:pretty">Multi-inbound WebSocket engine for streaming Pyth price feeds, in Rust.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Axum</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Tokio</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">Pyth</span></div>
               <div data-pdetail>
                 <div>
-                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Spins up temporary burner addresses on demand, like tempmail but for your wallet, so your main account never touches the money trail.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built on Solana with MagicBlock ephemeral rollups for fast, low-cost throwaway sessions.</span></li></ul>
-                  <div style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:13px"><a href="https://shredr.fun/" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">live</a><a href="https://github.com/toastx/shredr_fun" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a></div>
+                  <ul style="margin:15px 0 0;padding:15px 0 0;border-top:1px dashed #DCE0E8;list-style:none;display:flex;flex-direction:column;gap:9px"><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Built a multi-inbound WebSocket engine in Rust that fans Pyth Hermes price streams out to many subscribers over a single upstream connection.</span></li><li style="display:flex;gap:11px;font-size:14px;line-height:1.55;color:#5C5F77"><span style="color:#7287FD;font-family:'IBM Plex Mono',monospace;flex:0 0 auto;margin-top:1px">›</span><span>Axum + Tokio async runtime with per-client subscription tracking, so each connection only receives the feeds it asked for.</span></li></ul>
+                  <div style="display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:13px"><a href="https://github.com/toastx/rust-pyth-websockets" style="color:#8839EF;text-decoration:none;border-bottom:1px solid rgba(136,57,239,.3)" style-hover="border-bottom-color:#8839EF">repo</a></div>
                 </div>
               </div>
               <div data-phint aria-hidden="true" style="margin-top:11px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#ACB0BE;display:flex;align-items:center;gap:6px"><span style="width:5px;height:5px;border-radius:50%;background:#CBB8F2"></span>hover to expand</div>
@@ -326,7 +365,7 @@
               <tbody>
                 <tr style="border-bottom:1px solid #DCE0E8">
                   <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Languages</td>
-                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">TypeScript</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Python</span><span style="padding:4px 10px;border-radius:999px;background:#F4D9DE;color:#D20F39;font-family:'IBM Plex Mono',monospace;font-size:11px">Move</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">Solidity</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">Yul</span></div></td>
+                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Rust</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">TypeScript</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Python</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">Solidity</span></div></td>
                 </tr>
                 <tr style="border-bottom:1px solid #DCE0E8">
                   <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Web3 &amp; Smart Contracts</td>
@@ -336,9 +375,17 @@
                   <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Backend &amp; Databases</td>
                   <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Axum</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Django</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">PostgreSQL</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">Turso</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Qdrant (Vector DB)</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Prisma</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Docker</span></div></td>
                 </tr>
+                <tr style="border-bottom:1px solid #DCE0E8">
+                  <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Web</td>
+                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Next.js</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">React</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">TanStack</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">Flask</span></div></td>
+                </tr>
+                <tr style="border-bottom:1px solid #DCE0E8">
+                  <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">AI</td>
+                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">RAG</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">Agentic Workflows</span><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">On-Device LLMs</span><span style="padding:4px 10px;border-radius:999px;background:#FDE7D5;color:#FE640B;font-family:'IBM Plex Mono',monospace;font-size:11px">VAD</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">Diarization</span></div></td>
+                </tr>
                 <tr>
-                  <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Web &amp; AI Architecture</td>
-                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#E2EFDD;color:#40A02B;font-family:'IBM Plex Mono',monospace;font-size:11px">Next.js</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">React</span><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">RAG</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">Agentic Workflows</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">DeepSeek</span></div></td>
+                  <td style="padding:13px 16px;vertical-align:top;width:210px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#8839EF;background:#E6E9EF;border-right:1px solid #DCE0E8;white-space:nowrap">Privacy &amp; Cryptography</td>
+                  <td style="padding:11px 16px;vertical-align:middle"><div style="display:flex;flex-wrap:wrap;gap:7px"><span style="padding:4px 10px;border-radius:999px;background:#EBE0FB;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:11px">ZK Proofs</span><span style="padding:4px 10px;border-radius:999px;background:#E1E8FE;color:#1E66F5;font-family:'IBM Plex Mono',monospace;font-size:11px">ZK Compression</span><span style="padding:4px 10px;border-radius:999px;background:#FBE3F3;color:#EA76CB;font-family:'IBM Plex Mono',monospace;font-size:11px">Nullifier Sets</span><span style="padding:4px 10px;border-radius:999px;background:#F4D9DE;color:#D20F39;font-family:'IBM Plex Mono',monospace;font-size:11px">TEEs</span></div></td>
                 </tr>
               </tbody>
             </table>
@@ -440,9 +487,22 @@
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#9CA0B0">Dipesh NV &middot; Rust &amp; Solana Engineer</div>
               </div>
             </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div id="rview">
+              <a href="toastx_resume.pdf" target="_blank" rel="noopener" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:9px;background:transparent;color:#8839EF;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;padding:10px 18px;border:1px solid #CBB8F2;border-radius:10px;text-decoration:none">
+                <span style="font-size:15px">&#9678;</span> View
+              </a>
+              <div id="rview-panel">
+                <div>
+                  <div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#DCE0E8;border-bottom:1px solid #CCD0DA;font-family:'IBM Plex Mono',monospace"><span style="width:8px;height:8px;border-radius:50%;background:#D20F39"></span><span style="width:8px;height:8px;border-radius:50%;background:#DF8E1D"></span><span style="width:8px;height:8px;border-radius:50%;background:#40A02B"></span><span style="margin-left:6px;font-size:11px;color:#9CA0B0">toastx_resume.pdf</span><span style="margin-left:auto;font-size:10.5px;color:#ACB0BE">move out to close</span></div>
+                  <iframe src="toastx_resume.pdf#toolbar=0&amp;navpanes=0&amp;view=FitH" title="Résumé preview" loading="lazy"></iframe>
+                </div>
+              </div>
+            </div>
             <a href="toastx_resume.pdf" download="toastx_resume.pdf" style="flex:0 0 auto;display:inline-flex;align-items:center;gap:9px;background:#8839EF;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;padding:10px 18px;border-radius:10px;text-decoration:none;transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease,background .2s ease" style-hover="transform:translateY(-2px);box-shadow:0 10px 24px rgba(136,57,239,.30);background:#7A2FD6">
               <span style="font-size:15px">&#8595;</span> Download
             </a>
+            </div>
           </div>
         </section>
 
@@ -609,26 +669,33 @@ class Component extends DCLogic {
       if (cur) updateActive(cur);
     };
 
-    let raf = false;
-    window.addEventListener('scroll', () => {
-      if (!raf) { raf = true; requestAnimationFrame(() => { onScroll(); raf = false; }); }
-    }, { passive: true });
-
     // ---- lenis smooth scroll ----
     let lenis = null;
     if (!reduce && window.Lenis) {
       lenis = new window.Lenis({
-        lerp: 0.085,
+        // Higher lerp = tracks the wheel closely instead of drifting behind it.
+        lerp: 0.14,
         smoothWheel: true,
-        syncTouch: true,
-        wheelMultiplier: 0.9,
-        touchMultiplier: 1.5
+        // ponytail: native touch scrolling on mobile. syncTouch fights the OS
+        // scroller and is where the stutter came from.
+        syncTouch: false,
+        wheelMultiplier: 0.9
       });
+      // Single rAF loop drives lenis and the scroll readout, so the progress bar
+      // and active-section highlight update on the same frame as the scroll.
       const loop = (time) => { lenis.raf(time); requestAnimationFrame(loop); };
       requestAnimationFrame(loop);
+      lenis.on('scroll', onScroll);
     }
+    if (!lenis) {
+      let raf = false;
+      window.addEventListener('scroll', () => {
+        if (!raf) { raf = true; requestAnimationFrame(() => { onScroll(); raf = false; }); }
+      }, { passive: true });
+    }
+
     const scrollTo = (top) => {
-      if (lenis) lenis.scrollTo(top, { duration: 1.2, easing: (t) => 1 - Math.pow(1 - t, 3) });
+      if (lenis) lenis.scrollTo(top, { duration: 1.2, easing: (t) => 1 - Math.pow(1 - t, 4) });
       else window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
     };
 
